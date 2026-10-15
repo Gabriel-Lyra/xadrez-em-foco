@@ -1,0 +1,34 @@
+@startuml
+!include _style.iuml
+top to bottom direction
+node "Dispositivo do usuário" as DU {
+  node "Navegador web\n(Chrome, Firefox, Edge, Safari)" as NAV {
+    artifact "index.html + app.js"
+  }
+}
+cloud "Render (Free Web Service)" as RN {
+  node "Instância Linux\n(Python 3.12, 512 MB)" as INS {
+    component "Gunicorn" as GU
+    component "Aplicação Flask\n(Xadrez em Foco)" as APP
+    component "OpenCV (headless)" as CV
+    component "ONNX Runtime (CPU)" as ORT
+    artifact "modelo_pecas.onnx" as MOD
+  }
+}
+node "lichess.org" as LI
+node "GitHub" as GH {
+  artifact "repositório\nxadrez-em-foco"
+  component "GitHub Actions\n(testes)" as GA
+}
+node "Google Colab\n(GPU gratuita)" as COL {
+  component "Notebook de treino\n(PyTorch)"
+}
+NAV --> GU : HTTPS
+GU --> APP : WSGI
+APP --> CV
+APP --> ORT
+ORT --> MOD
+NAV ..> LI : HTTPS (link externo)
+GH --> RN : deploy automático\n(push na main)
+COL ..> GH : exporta .onnx
+@enduml

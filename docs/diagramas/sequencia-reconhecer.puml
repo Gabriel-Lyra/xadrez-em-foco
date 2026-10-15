@@ -1,0 +1,37 @@
+@startuml
+!include _style.iuml
+autonumber
+hide footbox
+actor "Enxadrista" as U
+participant "View\n(app.js)" as V
+participant "Reconhecimento\nController" as C
+participant "Servico\nReconhecimento" as S
+participant "Validador\nImagem" as VI
+participant "Detector\nTabuleiro" as DT
+participant "Segmentador\nCasas" as SC
+participant "Classificador\nPecas" as CP
+participant "GeradorFEN /\nValidadorPosicao /\nLinkLichess" as G
+U -> V : envia o print
+V -> C : POST /api/reconhecer
+C -> S : reconhecer(bytes)
+S -> VI : validar(arquivo)
+VI --> S : imagem (ndarray)
+S -> DT : detectar(imagem)
+alt tabuleiro não encontrado
+  DT --> S : erro
+  S --> C : erro 422
+  C --> V : 422 + mensagem
+  V --> U : orienta a\nrecortar o print
+else tabuleiro encontrado
+  DT --> S : RegiaoTabuleiro
+  S -> SC : segmentar(recorte)
+  SC --> S : 64 casas
+  S -> CP : classificar(casas)
+  CP --> S : 64 classificações
+  S -> G : orientação, FEN,\navisos, link
+  G --> S : dados
+  S --> C : ResultadoReconhecimento
+  C --> V : 200 + JSON
+  V --> U : exibe tabuleiro,\nFEN e botões
+end
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+!include _style.iuml
+top to bottom direction
+package "Aplicação web (app/)" {
+  [Front-end\nHTML/CSS/JS] as FE
+  [Rotas Flask\n(controller)] as RT
+  [Pipeline de\nreconhecimento\n(servicos + visao)] as PL
+  [Domínio de xadrez\n(dominio)] as DM
+}
+package "Pipeline de ML (treinamento/)" {
+  [Gerador de dataset\nsintético] as GD
+  [Treino da CNN\n(PyTorch/Colab)] as TR
+  [Avaliação\n(200+ posições)] as AV
+  [Exportação ONNX] as EX
+}
+artifact "modelo_pecas.onnx\n+ classes.json" as ART
+FE --> RT : HTTP/JSON
+RT --> PL
+PL --> DM
+PL --> ART : carrega na inicialização
+GD --> TR
+TR --> AV
+AV --> EX
+EX --> ART : versiona
+@enduml

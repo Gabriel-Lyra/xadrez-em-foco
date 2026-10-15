@@ -1,0 +1,38 @@
+@startuml
+!include _style.iuml
+top to bottom direction
+package "view" as V {
+  [templates Jinja2\n(index.html)] as T
+  [static\n(app.js, estilo.css)] as S
+}
+package "controller" as C {
+  [PaginaController] as PC
+  [ReconhecimentoController\n(API /api/reconhecer)] as RC
+}
+package "model" as M {
+  package "servicos" as SV {
+    [ServicoReconhecimento] as SR
+  }
+  package "visao" as VI {
+    [DetectorTabuleiro]
+    [SegmentadorCasas]
+    [ClassificadorPecas]
+  }
+  package "dominio" as DO {
+    [Posicao / Peca]
+    [GeradorFEN]
+    [ValidadorPosicao]
+    [GeradorLinkLichess]
+  }
+}
+package "infra" as IN {
+  [Configuracao]
+  [CarregadorModelo\n(ONNX Runtime)] as CM
+}
+V ..> C : requisições HTTP
+C ..> SV
+C ..> V : renderiza / JSON
+SV ..> VI
+SV ..> DO
+VI ..> CM
+@enduml

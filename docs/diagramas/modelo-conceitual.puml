@@ -1,0 +1,33 @@
+@startuml
+!include _style.iuml
+hide circle
+hide methods
+left to right direction
+entity "Captura de Tela" as CT {
+  formato: PNG, JPG ou WEBP
+  largura, altura: pixels
+  tamanho: até 10 MB
+}
+entity "Tabuleiro" as TB {
+  região: x, y, lado
+  orientação: brancas ou pretas
+}
+entity "Casa" as CA {
+  coluna: a..h
+  fileira: 1..8
+}
+entity "Peça" as PE {
+  cor: branca ou preta
+  tipo: R, D, T, B, C, P
+}
+entity "Resultado" as RE {
+  FEN: campo de posição
+  avisos
+  confiança média
+  link para o Lichess
+}
+CT ||--|| TB : contém
+TB ||--|{ CA : possui 64
+CA ||--o| PE : ocupada por
+TB ||--|| RE : gera
+@enduml

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<style>
+:root{--bg:#F5F3EE;--card:#FFFFFF;--ink:#1F2421;--muted:#6B716D;--line:#E3DFD6;--accent:#2F6B4F;--accent-2:#E8F1EC;--warn:#9A6B00;--warn-bg:#FFF6DD;--err:#A33A2B;--err-bg:#FCEBE8;--light:#EEDDB5;--dark:#B58863}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#d9d9d9;font-family:Poppins,sans-serif;color:var(--ink);padding:30px}
+.screen{width:1280px;height:800px;background:var(--bg);border-radius:14px;overflow:hidden;margin-bottom:40px;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.15)}
+.chrome{flex-shrink:0;height:40px;background:#E7E4DD;display:flex;align-items:center;padding:0 16px;gap:8px;border-bottom:1px solid var(--line)}
+.dot{width:12px;height:12px;border-radius:50%;background:#cfcac0}
+.url{margin-left:18px;background:#fff;border-radius:8px;padding:4px 14px;font-size:13px;color:var(--muted);width:520px}
+header{flex-shrink:0;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;border-bottom:1px solid var(--line);background:var(--card)}
+.logo{display:flex;align-items:center;gap:12px;font-weight:600;font-size:20px}
+.mark{width:34px;height:34px;border-radius:8px;background:var(--accent);display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.mark i{display:block}.mark i:nth-child(1),.mark i:nth-child(4){background:#fff;opacity:.9}
+nav{display:flex;gap:28px;font-size:14px;color:var(--muted)}
+main{flex:1;display:flex;padding:40px 48px;gap:40px}
+h1{font-size:34px;line-height:1.2;font-weight:600;letter-spacing:-.5px}
+.sub{color:var(--muted);font-size:16px;margin-top:10px;max-width:640px}
+.drop{margin-top:28px;border:2px dashed #B9C7BF;background:var(--card);border-radius:16px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.icon{width:64px;height:64px;border-radius:50%;background:var(--accent-2);display:flex;align-items:center;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:10px;padding:12px 20px;font-weight:500;font-size:15px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.kbd{font-family:"DejaVu Sans Mono";font-size:13px;background:#F0EEE9;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:1px 7px}
+.small{font-size:13px;color:var(--muted)}
+.steps{display:flex;gap:18px;margin-top:26px}
+.step{flex:1;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.step b{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--accent-2);color:var(--accent);font-size:14px;margin-bottom:8px}
+.step h3{font-size:15px;font-weight:600}.step p{font-size:13px;color:var(--muted);margin-top:4px}
+.board{display:grid;grid-template-columns:repeat(8,1fr);border-radius:6px;overflow:hidden;box-shadow:0 2px 0 rgba(0,0,0,.06)}
+.sq{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-family:"DejaVu Sans";line-height:1;position:relative}
+.sq.l{background:var(--light)}.sq.d{background:var(--dark)}
+.pw{color:#fff;-webkit-text-stroke:1.2px #2b2b2b}
+.pb{color:#1c1c1c}
+.coord{position:absolute;font-size:10px;font-weight:600;font-family:Poppins}
+.coord.f{right:3px;bottom:1px}.coord.r{left:3px;top:1px}
+.sq.l .coord{color:var(--dark)}.sq.d .coord{color:var(--light)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px}
+.label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600}
+.fen{margin-top:8px;display:flex;gap:10px}
+.fen input{flex:1;min-width:0;font-family:"DejaVu Sans Mono";font-size:13px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#FAF9F6;color:var(--ink)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:5px 12px;border-radius:999px}
+.badge.ok{background:var(--accent-2);color:var(--accent)}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:12px;font-size:14px}
+.alert.warn{background:var(--warn-bg);color:#6b4c00}
+.alert.err{background:var(--err-bg);color:var(--err)}
+.toggle{display:flex;background:#F0EEE9;border-radius:10px;padding:4px;gap:4px}
+.toggle span{flex:1;text-align:center;padding:8px 10px;border-radius:8px;font-size:14px;color:var(--muted)}
+.toggle span.on{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.row{display:flex;gap:12px;align-items:center}
+.spinner{width:54px;height:54px;border-radius:50%;border:5px solid var(--accent-2);border-top-color:var(--accent)}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:14px;font-size:15px}
+.checklist li{display:flex;gap:12px;align-items:center}
+.ck{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;color:#fff;background:var(--accent)}
+.ck.wait{background:#fff;border:2px solid var(--line)}
+.ck.run{background:#fff;border:3px solid var(--accent);border-right-color:var(--accent-2)}
+.fake{background:#302E2B;border-radius:10px;padding:14px;display:flex;gap:14px}
+.fake .side{flex:1;display:flex;flex-direction:column;gap:8px}
+.fake .bar{height:10px;background:#4a4744;border-radius:4px}
+footer{flex-shrink:0;height:44px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);border-top:1px solid var(--line);background:var(--card)}
+.phone{width:390px;height:800px;background:var(--bg);border-radius:36px;overflow:hidden;border:10px solid #1c1c1c;display:flex;flex-direction:column}
+.phones{display:flex;gap:40px;width:1280px;justify-content:center;padding:20px 0;background:#E9E6E0;border-radius:14px}
+</style></head><body>
+
+<!-- 1. Tela inicial -->
+<section class="screen" id="s1">
+  <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">xadrez-em-foco.onrender.com</span></div>
+  <header><div class="logo"><div class="mark"><i></i><i></i><i></i><i></i></div>Xadrez em Foco</div><nav><span>Como funciona</span><span>Sobre</span></nav></header>
+  <main style="flex-direction:column;align-items:center;text-align:center;gap:0;padding-top:34px">
+    <h1>Transforme o print de um tabuleiro em FEN</h1>
+    <p class="sub">Envie a captura de tela de uma partida online e receba a posição pronta para analisar no Lichess — sem digitar peça por peça.</p>
+    <div class="drop" style="width:760px">
+      <div class="icon"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg></div>
+      <div style="font-size:18px;font-weight:500">Arraste o print aqui</div>
+      <div class="small">ou cole direto da área de transferência com <span class="kbd">Ctrl</span> + <span class="kbd">V</span></div>
+      <span class="btn primary" style="margin-top:6px">Escolher arquivo</span>
+      <div class="small" style="margin-top:4px">PNG, JPG ou WEBP · até 10 MB</div>
+    </div>
+    <div class="steps" style="width:760px;text-align:left">
+      <div class="step"><b>1</b><h3>Envie o print</h3><p>Captura de tela do chess.com, lichess.org ou similar.</p></div>
+      <div class="step"><b>2</b><h3>Reconhecimento</h3><p>O sistema encontra o tabuleiro e identifica cada peça.</p></div>
+      <div class="step"><b>3</b><h3>Copie ou analise</h3><p>Copie o FEN ou abra a posição direto no Lichess.</p></div>
+    </div>
+  </main>
+  <footer>Xadrez em Foco · Projeto Integrador II · UniCEUB 2026 · As imagens enviadas não são armazenadas.</footer>
+</section>
+
+<!-- 2. Processando -->
+<section class="screen" id="s2">
+  <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">xadrez-em-foco.onrender.com</span></div>
+  <header><div class="logo"><div class="mark"><i></i><i></i><i></i><i></i></div>Xadrez em Foco</div><nav><span>Como funciona</span><span>Sobre</span></nav></header>
+  <main style="align-items:center;justify-content:center;gap:60px">
+    <div class="card" style="width:520px">
+      <div class="label">Imagem enviada</div>
+      <div class="fake" style="margin-top:12px">
+        <div id="miniboard" style="width:300px"></div>
+        <div class="side"><div class="bar" style="width:70%"></div><div class="bar"></div><div class="bar" style="width:85%"></div><div class="bar" style="width:60%"></div><div class="bar" style="width:90%"></div></div>
+      </div>
+      <div class="small" style="margin-top:10px">print_partida.png · 1,2 MB</div>
+    </div>
+    <div style="width:420px">
+      <div class="row" style="gap:18px"><div class="spinner"></div><div><h1 style="font-size:26px">Reconhecendo a posição…</h1><div class="small">Normalmente leva poucos segundos.</div></div></div>
+      <ul class="checklist" style="margin-top:30px">
+        <li><span class="ck">✓</span>Imagem validada</li>
+        <li><span class="ck">✓</span>Tabuleiro localizado</li>
+        <li><span class="ck run"></span><b style="font-weight:500">Identificando as peças (64 casas)</b></li>
+        <li style="color:var(--muted)"><span class="ck wait"></span>Gerando o FEN</li>
+      </ul>
+    </div>
+  </main>
+  <footer>Xadrez em Foco · Projeto Integrador II · UniCEUB 2026 · As imagens enviadas não são armazenadas.</footer>
+</section>
+
+<!-- 3. Resultado -->
+<section class="screen" id="s3">
+  <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">xadrez-em-foco.onrender.com</span></div>
+  <header><div class="logo"><div class="mark"><i></i><i></i><i></i><i></i></div>Xadrez em Foco</div><nav><span>Como funciona</span><span>Sobre</span></nav></header>
+  <main>
+    <div style="width:520px">
+      <div class="row" style="justify-content:space-between;margin-bottom:12px"><div class="label">Posição reconhecida</div><span class="badge ok">● Confiança 98,7%</span></div>
+      <div id="bigboard" style="width:520px"></div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:18px">
+      <div><h1 style="font-size:28px">Pronto! Confira a posição.</h1><p class="sub" style="font-size:15px">Compare o tabuleiro ao lado com o seu print antes de copiar.</p></div>
+      <div class="card">
+        <div class="label">Notação FEN (posição das peças)</div>
+        <div class="fen"><input value="r1bqk2r/pppnbppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR"><span class="btn">Copiar</span></div>
+        <div class="label" style="margin-top:20px">Lado de baixo do print</div>
+        <div class="toggle" style="margin-top:8px"><span class="on">♙ Brancas</span><span>♟ Pretas</span></div>
+        <div class="small" style="margin-top:6px">Detectado automaticamente. Troque se o print estiver com as pretas embaixo.</div>
+        <div class="row" style="margin-top:22px"><span class="btn primary">Abrir no Lichess ↗</span><span class="btn">Enviar outro print</span></div>
+      </div>
+      <div class="alert warn"><span>⚠</span><div><b style="font-weight:600">Atenção:</b> o Lichess abrirá com as brancas para jogar. Turno, roque e en passant não são lidos do print — ajuste-os no próprio Lichess se precisar.</div></div>
+    </div>
+  </main>
+  <footer>Xadrez em Foco · Projeto Integrador II · UniCEUB 2026 · As imagens enviadas não são armazenadas.</footer>
+</section>
+
+<!-- 4. Erro -->
+<section class="screen" id="s4">
+  <div class="chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="url">xadrez-em-foco.onrender.com</span></div>
+  <header><div class="logo"><div class="mark"><i></i><i></i><i></i><i></i></div>Xadrez em Foco</div><nav><span>Como funciona</span><span>Sobre</span></nav></header>
+  <main style="flex-direction:column;align-items:center;gap:0">
+    <div class="card" style="width:720px;margin-top:30px">
+      <div class="alert err" style="font-size:16px"><span style="font-size:20px">✕</span><div><b style="font-weight:600">Não encontramos um tabuleiro nessa imagem.</b><div style="font-size:14px;margin-top:4px;color:#7d3025">O arquivo foi recebido, mas nenhuma grade 8×8 foi localizada com segurança.</div></div></div>
+      <div class="label" style="margin-top:22px">Dicas para funcionar melhor</div>
+      <ul style="margin:12px 0 0 20px;font-size:15px;line-height:1.9">
+        <li>Recorte o print deixando o tabuleiro inteiro visível.</li>
+        <li>Evite setas, destaques de lance ou menus abertos sobre as casas.</li>
+        <li>Prefira temas de tabuleiro padrão (marrom, verde ou azul).</li>
+        <li>Use a resolução original — evite fotos da tela ou imagens reduzidas.</li>
+      </ul>
+      <div class="row" style="margin-top:24px"><span class="btn primary">Tentar com outro print</span><span class="small">ou cole com <span class="kbd">Ctrl</span> + <span class="kbd">V</span></span></div>
+    </div>
+  </main>
+  <footer>Xadrez em Foco · Projeto Integrador II · UniCEUB 2026 · As imagens enviadas não são armazenadas.</footer>
+</section>
+
+<!-- 5. Mobile -->
+<section class="phones" id="s5">
+  <div class="phone">
+    <header style="padding:0 20px;height:60px"><div class="logo" style="font-size:17px"><div class="mark" style="width:28px;height:28px"><i></i><i></i><i></i><i></i></div>Xadrez em Foco</div></header>
+    <div style="padding:24px 20px;display:flex;flex-direction:column;gap:16px;text-align:center">
+      <h1 style="font-size:24px">Transforme o print de um tabuleiro em FEN</h1>
+      <p class="small" style="font-size:14px">Envie a captura de tela e analise no Lichess.</p>
+      <div class="drop" style="height:260px;margin-top:6px">
+        <div class="icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg></div>
+        <div style="font-weight:500">Toque para escolher o print</div>
+        <span class="btn primary">Abrir galeria</span>
+        <div class="small">PNG, JPG ou WEBP · até 10 MB</div>
+      </div>
+      <div class="step" style="text-align:left"><b>1</b><h3>Envie o print</h3><p>Da galeria do celular ou de arquivos.</p></div>
+    </div>
+  </div>
+  <div class="phone">
+    <header style="padding:0 20px;height:60px"><div class="logo" style="font-size:17px"><div class="mark" style="width:28px;height:28px"><i></i><i></i><i></i><i></i></div>Xadrez em Foco</div></header>
+    <div style="padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+      <div class="row" style="justify-content:space-between"><div class="label">Posição reconhecida</div><span class="badge ok">● 98,7%</span></div>
+      <div id="mobboard" style="width:350px"></div>
+      <div class="label">FEN</div>
+      <div class="fen" style="margin-top:-6px"><input style="font-size:12px;padding:10px" value="r1bqk2r/pppnbppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR"></div>
+      <div class="toggle"><span class="on">♙ Brancas</span><span>♟ Pretas</span></div>
+      <div class="row"><span class="btn" style="flex:1;justify-content:center">Copiar</span><span class="btn primary" style="flex:1.4;justify-content:center">Abrir no Lichess ↗</span></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const G={k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+function board(id,fen,size,coords=true){
+  const el=document.getElementById(id);el.className='board';
+  const rows=fen.split('/');const fs=size/8*0.78;
+  rows.forEach((row,ri)=>{let fi=0;
+    for(const ch of row){
+      if(/\d/.test(ch)){for(let k=0;k<+ch;k++)cell(ri,fi++,null);}else cell(ri,fi++,ch);
+    }});
+  function cell(r,f,p){const d=document.createElement('div');d.className='sq '+((r+f)%2?'d':'l');d.style.fontSize=fs+'px';
+    if(p){const s=document.createElement('span');s.textContent=G[p.toLowerCase()];s.className=p===p.toUpperCase()?'pw':'pb';d.appendChild(s);}
+    if(coords&&r===7){const c=document.createElement('span');c.className='coord f';c.textContent='abcdefgh'[f];d.appendChild(c);}
+    if(coords&&f===0){const c=document.createElement('span');c.className='coord r';c.textContent=8-r;d.appendChild(c);}
+    el.appendChild(d);}
+}
+const F='r1bqk2r/pppnbppp/4pn2/3p2B1/2PP4/2N1P3/PP3PPP/R2QKBNR';
+board('bigboard',F,520);board('miniboard',F,300,false);board('mobboard',F,350);
+</script>
+</body></html>

@@ -1,0 +1,66 @@
+@startuml
+!include _style.iuml
+skinparam dpi 150
+skinparam nodesep 25
+skinparam ranksep 40
+hide empty members
+class ServicoReconhecimento <<servicos>>
+package dominio {
+enum Cor {
+  BRANCA
+  PRETA
+}
+enum TipoPeca {
+  REI
+  DAMA
+  TORRE
+  BISPO
+  CAVALO
+  PEAO
+}
+class Peca {
+  + cor : Cor
+  + tipo : TipoPeca
+  + simbolo_fen() : str
+}
+class Posicao {
+  - casas : Peca[8][8]
+  + peca_em(coluna, fileira) : Peca
+  + invertida() : Posicao
+}
+class DetectorOrientacao {
+  + detectar(p : Posicao) : Cor
+}
+class GeradorFEN {
+  + gerar(p : Posicao) : str
+}
+class ValidadorPosicao {
+  + validar(p : Posicao) : list[str]
+}
+class GeradorLinkLichess {
+  + gerar(fen : str) : str
+}
+class ResultadoReconhecimento {
+  + fen : str
+  + fen_invertido : str
+  + orientacao : Cor
+  + avisos : list[str]
+  + confianca_media : float
+  + link_lichess : str
+  + tempo_ms : int
+  + para_dict() : dict
+}
+}
+ServicoReconhecimento --> DetectorOrientacao
+ServicoReconhecimento --> GeradorFEN
+ServicoReconhecimento --> ValidadorPosicao
+ServicoReconhecimento --> GeradorLinkLichess
+ServicoReconhecimento ..> ResultadoReconhecimento : cria
+ServicoReconhecimento ..> Posicao : monta
+Posicao "1" o-- "0..32" Peca
+Peca --> Cor
+Peca --> TipoPeca
+GeradorFEN ..> Posicao
+ValidadorPosicao ..> Posicao
+DetectorOrientacao ..> Posicao
+@enduml

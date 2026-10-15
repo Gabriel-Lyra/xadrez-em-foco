@@ -1,0 +1,60 @@
+@startuml
+!include _style.iuml
+skinparam dpi 150
+skinparam nodesep 25
+skinparam ranksep 40
+hide empty members
+left to right direction
+package controller {
+class PaginaController {
+  + index() : Response
+}
+class ReconhecimentoController {
+  - servico : ServicoReconhecimento
+  + reconhecer(request) : Response
+}
+}
+package servicos {
+class ServicoReconhecimento {
+  + reconhecer(imagem : bytes) : ResultadoReconhecimento
+}
+class ValidadorImagem {
+  + TAMANHO_MAX_MB : int = 10
+  + validar(arquivo) : ndarray
+}
+}
+package visao {
+class DetectorTabuleiro {
+  + detectar(img : ndarray) : RegiaoTabuleiro
+}
+class RegiaoTabuleiro {
+  + x : int
+  + y : int
+  + lado : int
+  + recortar(img : ndarray) : ndarray
+}
+class SegmentadorCasas {
+  + segmentar(tabuleiro : ndarray) : list[ndarray]
+}
+class ClassificadorPecas {
+  - sessao : InferenceSession
+  - classes : list[str]
+  + classificar(casas : list[ndarray]) : list[Classificacao]
+}
+class Classificacao {
+  + rotulo : str
+  + confianca : float
+}
+}
+package "dominio (ver Figura 4)" as dom {
+class "ResultadoReconhecimento" as RR
+}
+ReconhecimentoController --> ServicoReconhecimento
+ServicoReconhecimento --> ValidadorImagem
+ServicoReconhecimento --> DetectorTabuleiro
+ServicoReconhecimento --> SegmentadorCasas
+ServicoReconhecimento --> ClassificadorPecas
+ServicoReconhecimento ..> RR : cria
+DetectorTabuleiro ..> RegiaoTabuleiro : cria
+ClassificadorPecas ..> Classificacao : cria
+@enduml
