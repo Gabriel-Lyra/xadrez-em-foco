@@ -1,0 +1,53 @@
+{
+  "epocas": 12,
+  "lote": 256,
+  "taxa": 0.003,
+  "semente": 42,
+  "casas_de_treino": 132561,
+  "parametros": 286597,
+  "tempo_de_treino_s": 1853,
+  "validacao_interna": {
+    "casas": 6976,
+    "acerto_por_casa": 1.0,
+    "acerto_casas_ocupadas": 1.0,
+    "acerto_por_classe": {
+      "K": 1.0,
+      "Q": 1.0,
+      "R": 1.0,
+      "B": 1.0,
+      "N": 1.0,
+      "P": 1.0,
+      "k": 1.0,
+      "q": 1.0,
+      "r": 1.0,
+      "b": 1.0,
+      "n": 1.0,
+      "p": 1.0,
+      "vazio": 1.0
+    }
+  },
+  "conjuntos_reservados": {
+    "casas": 25600,
+    "acerto_por_casa": 0.9946484375,
+    "acerto_casas_ocupadas": 0.9843155345404221,
+    "acerto_por_classe": {
+      "K": 1.0,
+      "Q": 1.0,
+      "R": 1.0,
+      "B": 1.0,
+      "N": 1.0,
+      "P": 0.9994182664339732,
+      "k": 0.9375,
+      "q": 0.9926289926289926,
+      "r": 0.8220757825370676,
+      "b": 1.0,
+      "n": 1.0,
+      "p": 1.0,
+      "vazio": 0.9999409297654912
+    },
+    "tabuleiros": 400,
+    "tabuleiros_exatos": 0.795
+  },
+  "diferenca_maxima_onnx": 3.5762786865234375e-07,
+  "tamanho_onnx_kb": 1122
+}

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xadrez em Foco</title>
+  <meta name="description" content="Envie o print de um tabuleiro de xadrez e receba a posição em FEN, pronta para analisar no Lichess.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='estilo.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <a class="logo" href="{{ url_for('pagina.index') }}">
+      <span class="marca" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      Xadrez em Foco
+    </a>
+    <nav class="menu" aria-label="Seções">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+  </header>
+
+  <main class="conteudo">
+    <!-- Tela inicial (UC01): envio do print -->
+    <section id="tela-inicial" class="tela tela-inicial" aria-labelledby="titulo-inicial">
+      <h1 id="titulo-inicial">Transforme o print de um tabuleiro em FEN</h1>
+      <p class="sub">Envie a captura de tela de uma partida on-line e receba a posição pronta para analisar no Lichess, sem digitar peça por peça.</p>
+
+      <div id="area-envio" class="area-envio" tabindex="0" role="button"
+           aria-describedby="formatos-aceitos"
+           aria-label="Enviar print: escolha um arquivo, arraste a imagem ou cole com Ctrl+V">
+        <span class="icone" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg>
+        </span>
+        <span class="area-titulo so-mouse">Arraste o print aqui</span>
+        <span class="area-titulo so-toque">Toque para escolher o print</span>
+        <span class="pequeno dica-colar">ou cole direto da área de transferência com <kbd>Ctrl</kbd> + <kbd>V</kbd></span>
+        <span class="botao primario"><span class="so-mouse">Escolher arquivo</span><span class="so-toque">Abrir galeria</span></span>
+        <span id="formatos-aceitos" class="pequeno">PNG, JPG ou WEBP · até 10 MB</span>
+        <input id="campo-arquivo" class="oculto" type="file" accept="image/png,image/jpeg,image/webp" tabindex="-1">
+      </div>
+      <p id="mensagem-envio" class="alerta erro" role="alert" hidden></p>
+
+      <ol id="como-funciona" class="passos">
+        <li class="passo"><b>1</b><h2>Envie o print</h2><p>Captura de tela do chess.com, lichess.org ou similar.</p></li>
+        <li class="passo"><b>2</b><h2>Reconhecimento</h2><p>O sistema encontra o tabuleiro e identifica cada peça.</p></li>
+        <li class="passo"><b>3</b><h2>Copie ou analise</h2><p>Copie o FEN ou abra a posição direto no Lichess.</p></li>
+      </ol>
+    </section>
+
+    <!-- Processando (UC02) -->
+    <section id="tela-processando" class="tela tela-processando" aria-labelledby="titulo-processando" hidden>
+      <div class="cartao previa">
+        <div class="rotulo">Imagem enviada</div>
+        <img id="previa-imagem" class="previa-imagem" alt="Print enviado">
+        <div id="previa-legenda" class="pequeno"></div>
+      </div>
+      <div class="andamento" role="status" aria-live="polite">
+        <div class="linha">
+          <span class="girando" aria-hidden="true"></span>
+          <div>
+            <h1 id="titulo-processando">Reconhecendo a posição…</h1>
+            <div class="pequeno">Normalmente leva poucos segundos.</div>
+          </div>
+        </div>
+        <ul class="etapas">
+          <li>Validação da imagem</li>
+          <li>Localização do tabuleiro</li>
+          <li>Identificação das peças (64 casas)</li>
+          <li>Geração do FEN</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Resultado (UC03, UC04, UC05) -->
+    <section id="tela-resultado" class="tela tela-resultado" aria-labelledby="titulo-resultado" hidden>
+      <div id="faixa-demonstracao" class="alerta atencao faixa-demonstracao" role="note" hidden>
+        <strong id="texto-demonstracao"></strong>
+      </div>
+
+      <div class="resultado-colunas">
+        <div class="coluna-tabuleiro">
+          <div class="linha cabecalho-tabuleiro">
+            <span class="rotulo">Posição reconhecida</span>
+            <span id="selo-confianca" class="selo"></span>
+          </div>
+          <div id="tabuleiro" class="tabuleiro" role="img" aria-label="Tabuleiro reconhecido"></div>
+        </div>
+
+        <div class="coluna-detalhes">
+          <div>
+            <h1 id="titulo-resultado">Pronto! Confira a posição.</h1>
+            <p class="sub">Compare o tabuleiro com o seu print antes de copiar.</p>
+          </div>
+
+          <div class="cartao">
+            <label class="rotulo" for="campo-fen">Notação FEN (posição das peças)</label>
+            <div class="fen">
+              <input id="campo-fen" type="text" readonly spellcheck="false" autocomplete="off">
+              <button id="botao-copiar" type="button" class="botao">Copiar</button>
+            </div>
+            <span id="aviso-copia" class="pequeno aviso-copia" role="status" aria-live="polite"></span>
+
+            <div class="rotulo rotulo-orientacao" id="rotulo-orientacao">Lado de baixo do print</div>
+            <div class="alternancia" role="group" aria-labelledby="rotulo-orientacao">
+              <button type="button" class="opcao" data-orientacao="brancas" aria-pressed="true">&#9817;&#xFE0E; Brancas</button>
+              <button type="button" class="opcao" data-orientacao="pretas" aria-pressed="false">&#9823;&#xFE0E; Pretas</button>
+            </div>
+            <p id="explicacao-orientacao" class="pequeno explicacao-orientacao"></p>
+
+            <div class="linha acoes">
+              <a id="link-lichess" class="botao primario" href="https://lichess.org/analysis" target="_blank" rel="noopener noreferrer">Abrir no Lichess <span aria-hidden="true">↗</span></a>
+              <button type="button" class="botao" data-acao="recomecar">Enviar outro print</button>
+            </div>
+          </div>
+
+          <div id="avisos-posicao" class="alerta atencao" hidden>
+            <strong>Confira estes pontos da posição:</strong>
+            <ul id="lista-avisos"></ul>
+          </div>
+
+          <div class="alerta atencao">
+            <span><strong>Atenção:</strong> o Lichess abrirá com as brancas para jogar. Turno, roque e en passant não são lidos do print; ajuste-os no próprio Lichess se precisar.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Erro (PB21): mensagens da Tabela 4 do Documento de Arquitetura, com dicas -->
+    <section id="tela-erro" class="tela tela-erro" aria-labelledby="titulo-erro" hidden>
+      <div class="cartao">
+        <div class="alerta erro alerta-grande" role="alert">
+          <strong id="titulo-erro">Não foi possível reconhecer a posição.</strong>
+          <span id="erro-mensagem"></span>
+        </div>
+        <div class="rotulo rotulo-dicas">Dicas para funcionar melhor</div>
+        <ul id="erro-dicas" class="dicas"></ul>
+        <div class="linha acoes">
+          <button type="button" class="botao primario" data-acao="recomecar">Tentar com outro print</button>
+          <span class="pequeno dica-colar">ou cole com <kbd>Ctrl</kbd> + <kbd>V</kbd></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="sobre" class="sobre" aria-labelledby="titulo-sobre">
+      <h2 id="titulo-sobre">Sobre</h2>
+      <p>O Xadrez em Foco é o Projeto Integrador II do curso de Ciência da Computação do UniCEUB (2026), desenvolvido com um enxadrista como usuário parceiro da Atividade Curricular de Extensão. O sistema lê só capturas de tela de tabuleiros digitais e gera o campo de posição das peças do FEN; turno, roque e en passant são ajustados no Lichess.</p>
+    </section>
+  </main>
+
+  <footer class="rodape">Xadrez em Foco · Projeto Integrador II · UniCEUB 2026 · As imagens enviadas não são armazenadas.</footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
