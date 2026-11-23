@@ -17,4 +17,4 @@ Treinado com 132.561 casas sintéticas de 30 conjuntos de peças, 12 épocas, 28
 
 Os erros nas peças reservadas se concentram no conjunto `leipzig`: a torre e o rei pretos são lidos como brancos. Nos outros dois conjuntos, mais de 97% dos tabuleiros saem sem erro.
 
-Estes números são de imagens sintéticas. A medição com prints reais é o PB16.
+Estes números são de imagens sintéticas, desenhadas pelo mesmo gerador do treino. A medição com as 200 posições do conjunto de teste, pelo caminho completo da aplicação, está em [`conjunto-teste/README.md`](../conjunto-teste/README.md): 99,0% das peças e 81,5% de FEN exato.
